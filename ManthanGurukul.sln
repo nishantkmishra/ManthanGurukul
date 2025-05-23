@@ -1,13 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A04C6D08-20B2-4098-A17A-99D20F65C676}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{299CA603-4872-48C2-84EA-09EA31460B8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.API", "ManthanGurukul.API\ManthanGurukul.API.csproj", "{BCC4DD4C-CD1C-44C7-B92E-0552EABA3320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.Application", "ManthanGurukul.Application\ManthanGurukul.Application.csproj", "{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.Domain", "ManthanGurukul.Domain\ManthanGurukul.Domain.csproj", "{8EAA1439-4025-433F-8016-40DBEAD6D9BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.Infrastructure", "ManthanGurukul.Infrastructure\ManthanGurukul.Infrastructure.csproj", "{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.Shared", "ManthanGurukul.Shared\ManthanGurukul.Shared.csproj", "{473E82F9-2D47-4CF7-8251-05BE371CE059}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManthanGurukul.BlazorApp", "ManthanGurukul.BlazorApp\ManthanGurukul.BlazorApp.csproj", "{ADC5AE8E-D3FD-4B7B-991A-E521511C5873}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,11 +29,36 @@ Global
 		{BCC4DD4C-CD1C-44C7-B92E-0552EABA3320}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCC4DD4C-CD1C-44C7-B92E-0552EABA3320}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCC4DD4C-CD1C-44C7-B92E-0552EABA3320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EAA1439-4025-433F-8016-40DBEAD6D9BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EAA1439-4025-433F-8016-40DBEAD6D9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EAA1439-4025-433F-8016-40DBEAD6D9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EAA1439-4025-433F-8016-40DBEAD6D9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473E82F9-2D47-4CF7-8251-05BE371CE059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473E82F9-2D47-4CF7-8251-05BE371CE059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473E82F9-2D47-4CF7-8251-05BE371CE059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473E82F9-2D47-4CF7-8251-05BE371CE059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC5AE8E-D3FD-4B7B-991A-E521511C5873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC5AE8E-D3FD-4B7B-991A-E521511C5873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC5AE8E-D3FD-4B7B-991A-E521511C5873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC5AE8E-D3FD-4B7B-991A-E521511C5873}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BCC4DD4C-CD1C-44C7-B92E-0552EABA3320} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
+		{F07FB778-0B3D-4E90-8A9E-5A16ABEF5D33} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
+		{8EAA1439-4025-433F-8016-40DBEAD6D9BA} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
+		{1CBF6310-53F5-4B9A-99A8-0DDE4B4B1F28} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
+		{473E82F9-2D47-4CF7-8251-05BE371CE059} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
+		{ADC5AE8E-D3FD-4B7B-991A-E521511C5873} = {A04C6D08-20B2-4098-A17A-99D20F65C676}
 	EndGlobalSection
 EndGlobal
