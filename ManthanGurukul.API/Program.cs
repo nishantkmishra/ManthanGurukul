@@ -1,4 +1,5 @@
-
+using ManthanGurukul.Application;
+using ManthanGurukul.Infrastructure;
 namespace ManthanGurukul.API
 {
     public class Program
@@ -13,6 +14,9 @@ namespace ManthanGurukul.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddApplicationService();
+            builder.Services.AddInfrastructureService(builder.Configuration);
 
             var app = builder.Build();
 
