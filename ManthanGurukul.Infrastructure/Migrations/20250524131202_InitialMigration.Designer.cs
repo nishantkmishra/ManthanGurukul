@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ManthanGurukul.Infrastructure.Migrations
 {
     [DbContext(typeof(ManthanGurukulDBContext))]
-    [Migration("20250524070141_InitialMigration")]
+    [Migration("20250524131202_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -24,6 +24,34 @@ namespace ManthanGurukul.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ManthanGurukul.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
+                });
 
             modelBuilder.Entity("ManthanGurukul.Domain.Entities.User", b =>
                 {
@@ -52,10 +80,10 @@ namespace ManthanGurukul.Infrastructure.Migrations
                     b.Property<long>("MobileNo")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ModifiedAt")
+                    b.Property<long?>("ModifiedAt")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid>("ModifiedBy")
+                    b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
 
                     b.Property<byte[]>("PasswordHash")
@@ -69,23 +97,21 @@ namespace ManthanGurukul.Infrastructure.Migrations
                     b.HasIndex("MobileNo", "Email")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("16e0b0e5-792f-4f11-beec-cfe9340fe4be"),
-                            CreatedAt = 638836669011345171L,
-                            CreatedBy = new Guid("16e0b0e5-792f-4f11-beec-cfe9340fe4be"),
+                            Id = new Guid("fecba826-3d32-44d9-960e-8fb7d3d5439d"),
+                            CreatedAt = 638836891223980019L,
+                            CreatedBy = new Guid("fecba826-3d32-44d9-960e-8fb7d3d5439d"),
                             Email = "nishant.kumar.mishra@gmail.com",
                             FirstName = "Nishant",
                             IsActive = true,
                             LastName = "Mishra",
                             MobileNo = 9945654327L,
-                            ModifiedAt = 0L,
-                            ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            PasswordHash = new byte[] { 125, 224, 34, 193, 214, 148, 94, 129, 17, 191, 150, 112, 110, 54, 108, 193, 109, 62, 25, 152, 219, 44, 66, 215, 235, 254, 46, 99, 26, 105, 60, 154, 15, 212, 235, 74, 170, 208, 187, 194, 50, 239, 77, 228, 96, 101, 67, 137, 43, 84, 246, 179, 93, 83, 45, 0, 8, 50, 169, 201, 208, 68, 33, 123 },
-                            PasswordSalt = new byte[] { 142, 25, 152, 55, 28, 166, 3, 170, 139, 2, 13, 0, 187, 0, 221, 188, 10, 13, 227, 143, 155, 225, 12, 85, 226, 26, 146, 155, 241, 9, 149, 137, 211, 249, 236, 158, 120, 52, 152, 219, 18, 123, 100, 89, 76, 7, 38, 37, 31, 151, 143, 135, 93, 2, 248, 40, 198, 51, 34, 99, 100, 98, 81, 103, 206, 103, 239, 106, 202, 86, 11, 42, 155, 185, 165, 108, 227, 114, 113, 109, 76, 142, 56, 247, 154, 5, 248, 6, 108, 220, 68, 17, 18, 215, 116, 148, 195, 118, 113, 163, 66, 211, 225, 186, 118, 193, 61, 27, 143, 183, 171, 64, 118, 208, 186, 186, 195, 73, 149, 179, 116, 63, 129, 106, 255, 22, 21, 172 }
+                            PasswordHash = new byte[] { 141, 111, 248, 144, 4, 234, 12, 200, 235, 123, 142, 70, 188, 50, 30, 10, 20, 169, 12, 65, 236, 254, 95, 125, 222, 99, 208, 202, 214, 23, 117, 25, 62, 144, 126, 226, 69, 13, 61, 107, 61, 240, 181, 44, 68, 207, 83, 85, 38, 228, 6, 150, 148, 224, 23, 121, 61, 205, 231, 128, 62, 45, 250, 3 },
+                            PasswordSalt = new byte[] { 176, 238, 135, 69, 73, 19, 140, 147, 146, 136, 41, 69, 227, 199, 133, 196, 98, 101, 45, 117, 127, 145, 219, 29, 194, 7, 255, 109, 151, 63, 104, 97, 76, 205, 95, 12, 27, 240, 96, 225, 217, 249, 106, 245, 58, 137, 136, 66, 24, 239, 218, 66, 222, 164, 88, 166, 184, 99, 228, 241, 179, 194, 14, 64, 135, 221, 70, 94, 16, 77, 236, 41, 41, 162, 40, 202, 50, 117, 91, 37, 115, 194, 7, 104, 69, 117, 76, 239, 245, 103, 254, 229, 93, 224, 211, 13, 7, 75, 179, 22, 241, 35, 170, 155, 187, 157, 52, 174, 124, 36, 147, 164, 196, 173, 177, 238, 131, 214, 250, 43, 233, 252, 22, 28, 80, 15, 206, 140 }
                         });
                 });
 #pragma warning restore 612, 618

@@ -1,4 +1,4 @@
-﻿namespace ManthanGurukul.Application.Users
+﻿namespace ManthanGurukul.Application.UseCases.Users
 {
     public class RegisterUserRequest
     {
