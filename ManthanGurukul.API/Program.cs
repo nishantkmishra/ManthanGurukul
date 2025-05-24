@@ -1,3 +1,4 @@
+using ManthanGurukul.API.Middleware;
 using ManthanGurukul.Application;
 using ManthanGurukul.Infrastructure;
 namespace ManthanGurukul.API
@@ -27,6 +28,7 @@ namespace ManthanGurukul.API
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using ManthanGurukul.Application.Exceptions;
 using ManthanGurukul.Application.Interfaces;
 using ManthanGurukul.Application.Services.Interfaces;
 using ManthanGurukul.Application.Users;
 using ManthanGurukul.Domain.Entities;
 using ManthanGurukul.Shared.DTOs;
+using ManthanGurukul.Shared.Helpers;
 
 namespace ManthanGurukul.Application.Services
 {
@@ -19,27 +21,19 @@ namespace ManthanGurukul.Application.Services
         }
         public async Task<UserDto> SignInAsync(SignInUserRequest request)
         {
-            if (request == null)
+            var user = await _repository.GetFirstOrDefaultAsync(x => x.MobileNo == request.MobileNo && x.IsActive == true);
+            if (user == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request cannot be null.");
+                throw new NotFoundException($"User with mobile no {request.MobileNo} not found or account inactive.");
             }
             else
             {
-
-                var user = await _repository.GetFirstOrDefaultAsync(x => x.MobileNo == request.MobileNo);
-                if (user == null)
+                if (!PasswordHasher.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
                 {
-                    throw new Exception($"User with mobile no {request.MobileNo} not found.");
+                    throw new BadRequestException("Invalid Credentials");
                 }
-                else
-                {
-                    if (!Shared.Helpers.PasswordHasher.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
-                    {
-                        throw new Exception("Invalid Credentials");
-                    }
-                }
-                return _mapper.Map<UserDto>(user);
             }
+            return _mapper.Map<UserDto>(user);
         }
     }
 }
