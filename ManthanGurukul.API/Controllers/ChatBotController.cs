@@ -10,7 +10,7 @@ namespace ManthanGurukul.API.Controllers
     public class ChatBotController : ControllerBase
     {
         // Consider moving these to configuration for production use
-        private const string PdfFilePath = @"C:\Users\nisha\Downloads\TestReport_NISHANT MISHRA_256030000811_4294e6ca-1ac5-4130-aca5-dc4fa072dfa5.pdf";
+        private const string PdfFilePath = @"C:\Users\nisha\Downloads\View Candidate Admit Card.pdf";
         private const string ScriptPath = @"C:\Projects\ManthanGurukul\ManthanGurukul.ChatBot\pdfExtractor.py";
 
         private readonly ILogger<ChatBotController> _logger;
