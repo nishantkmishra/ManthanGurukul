@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using ManthanGurukul.Application.UseCases.ChatBot;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace ManthanGurukul.API.Controllers
 {
@@ -20,9 +21,9 @@ namespace ManthanGurukul.API.Controllers
         }
 
         [HttpPost("ask")]
-        public async Task<IActionResult> Ask([FromForm] string question)
+        public async Task<IActionResult> Ask([FromBody] AskRequest request)
         {
-            if (string.IsNullOrWhiteSpace(question))
+            if (string.IsNullOrWhiteSpace(request.Question))
                 return BadRequest("Question is required.");
 
             if (!System.IO.File.Exists(PdfFilePath))
@@ -34,7 +35,7 @@ namespace ManthanGurukul.API.Controllers
             var psi = new ProcessStartInfo
             {
                 FileName = "python",
-                Arguments = $"\"{ScriptPath}\" --pdf \"{PdfFilePath}\" --question \"{question}\"",
+                Arguments = $"\"{ScriptPath}\" --pdf \"{PdfFilePath}\" --question \"{request.Question}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

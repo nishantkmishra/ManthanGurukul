@@ -1,4 +1,39 @@
 ﻿@inherits LayoutComponentBase
+@inject HttpClient Http
+
+<style>
+/* wwwroot/css/app.css */
+.chatbot-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.chatbot-toggle {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatbot-window {
+    width: 320px;
+    margin-bottom: 8px;
+    animation: fadeInUp 0.3s;
+}
+
+@@keyframes fadeInUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -14,3 +49,102 @@
         </article>
     </main>
 </div>
+
+<!-- Chatbot Floating Button and Popup -->
+<div class="chatbot-container">
+    <button class="btn btn-primary rounded-circle chatbot-toggle" hidden="@showChat" @onclick="ToggleChat">
+        <i class="bi bi-chat-dots"></i>
+    </button>
+    @if (showChat)
+    {
+        <div class="card chatbot-window shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>ChatBot</span>
+                <button class="btn-close" @onclick="ToggleChat"></button>
+            </div>
+            <div class="card-body" style="height: 250px; overflow-y: auto;">
+                @if (chatHistory.Count == 0)
+                {
+                    <div class="text-muted small">How can I help you?</div>
+                }
+                else
+                {
+                    @foreach (var msg in chatHistory)
+                    {
+                        <div class="mb-2">
+                            <strong>@msg.Sender:</strong> @msg.Message
+                        </div>
+                    }
+                }
+                @if (isLoading)
+                {
+                    <div class="text-muted small">Bot is typing...</div>
+                }
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Type a message..." @bind="userMessage" @bind:event="oninput" @onkeydown="HandleEnter" />
+                    <button class="btn btn-primary" type="button" @onclick="SendMessage" disabled="@isLoading">Send</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool showChat = false;
+    private string userMessage = string.Empty;
+    private bool isLoading = false;
+
+    private List<ChatMessage> chatHistory = new();
+
+    private void ToggleChat()
+    {
+        showChat = !showChat;
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(userMessage)) return;
+
+        chatHistory.Add(new ChatMessage { Sender = "You", Message = userMessage });
+        var messageToSend = userMessage;
+        userMessage = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            // Adjust the URL if your API is hosted elsewhere or has a different route
+            var response = await Http.PostAsJsonAsync("https://localhost:7068/api/ChatBot/Ask", new { question = messageToSend });
+            if (response.IsSuccessStatusCode)
+            {
+                var botReply = await response.Content.ReadAsStringAsync();
+                chatHistory.Add(new ChatMessage { Sender = "Bot", Message = botReply });
+            }
+            else
+            {
+                chatHistory.Add(new ChatMessage { Sender = "Bot", Message = "Sorry, something went wrong." });
+            }
+        }
+        catch (Exception ex)
+        {
+            chatHistory.Add(new ChatMessage { Sender = "Bot", Message = ex.Message });
+        }
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    public class ChatMessage
+    {
+        public string Sender { get; set; } = "";
+        public string Message { get; set; } = "";
+    }
+}

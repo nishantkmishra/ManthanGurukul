@@ -54,7 +54,10 @@ namespace ManthanGurukul.API
 
             builder.Services.AddApplicationService(builder.Configuration);
             builder.Services.AddInfrastructureService(builder.Configuration);
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Pagination"));
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -67,6 +70,7 @@ namespace ManthanGurukul.API
             app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors("Open");
             app.UseAuthorization();
 
 
