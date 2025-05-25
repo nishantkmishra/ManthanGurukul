@@ -7,6 +7,10 @@ import numpy as np
 import pytesseract
 from pdf2image import convert_from_path
 import logging
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 logging.getLogger("pdfminer").setLevel(logging.ERROR)
 logging.getLogger("pdfplumber").setLevel(logging.ERROR)
@@ -147,7 +151,7 @@ class PDFChatbot:
     def get_response(self, question, sentence_threshold=0.30):
         q = question.strip().rstrip("?").strip(":")
         field_name = q
-        m = re.search(r"(?:what is|when is|what are|what is my|when is my|tell me| tell me about|tell me about my|show|display|give me|find)\s+(.+)", q, re.IGNORECASE)
+        m = re.search(r"(?:what is|show|display|give me|find)\s+(.+)", q, re.IGNORECASE)
         if m:
             field_name = m.group(1).strip()
         value = self.extract_field(field_name)
@@ -163,22 +167,19 @@ class PDFChatbot:
 
         return self.sentences[best_idx]
 
-def main():
+def cli():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--pdf', required=True, help='Path to PDF file')
+    parser.add_argument('--question', required=True, help='Question to ask')
+    args = parser.parse_args()
+
     chatbot = PDFChatbot()
-    pdf_path = r"C:\Users\nisha\Downloads\View Candidate Admit Card.pdf"
-    if not chatbot.load_pdf(pdf_path):
-        print("Failed to load PDF. Exiting...")
-        return
-
-    print("How may i help you today!")
-
-    while True:
-        user_input = input("\nYou: ")
-        if user_input.lower() == 'quit':
-            print("Goodbye!")
-            break
-        response = chatbot.get_response(user_input)
-        print(f"Bot: {response}")
+    if not chatbot.load_pdf(args.pdf):
+        print("Failed to load PDF.", file=sys.stderr)
+        sys.exit(1)
+    response = chatbot.get_response(args.question)
+    print(response)
 
 if __name__ == "__main__":
-    main()
+    cli()
