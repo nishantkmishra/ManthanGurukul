@@ -179,7 +179,7 @@
             if (response.IsSuccessStatusCode)
             {
                 var botReply = await response.Content.ReadAsStringAsync();
-                chatHistory.Add(new ChatMessage { Sender = "Bot", Message = botReply });
+                chatHistory.Add(new ChatMessage { Sender = "Bot", Message = botReply.Replace("DeepSeek", "Manthan Gurukul.AI") });
             }
             else
             {

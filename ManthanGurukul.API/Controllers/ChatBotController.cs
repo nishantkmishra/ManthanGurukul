@@ -1,7 +1,8 @@
 ﻿using ManthanGurukul.Application.UseCases.ChatBot;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace ManthanGurukul.API.Controllers
 {
@@ -9,15 +10,38 @@ namespace ManthanGurukul.API.Controllers
     [ApiController]
     public class ChatBotController : ControllerBase
     {
-        // Consider moving these to configuration for production use
-        private const string PdfFilePath = @"C:\Users\nisha\Downloads\View Candidate Admit Card.pdf";
-        private const string ScriptPath = @"C:\Projects\ManthanGurukul\ManthanGurukul.ChatBot\pdfExtractor.py";
-
         private readonly ILogger<ChatBotController> _logger;
 
         public ChatBotController(ILogger<ChatBotController> logger)
         {
             _logger = logger;
+        }
+
+        private async Task<string> CallOllamaAsync(string prompt, string model = "deepseek-r1", int maxTokens = 256)
+        {
+            using var httpClient = new HttpClient();
+            var url = "http://localhost:11434/api/chat";
+            var payload = new
+            {
+                model = model,
+                messages = new[]
+                {
+                    new { role = "system", content = "You are an intelligent assistant." },
+                    new { role = "user", content = prompt }
+                },
+                stream = false,
+                options = new
+                {
+                    num_predict = maxTokens,
+                    temperature = 0.2
+                }
+            };
+            var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(payload), System.Text.Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("message").GetProperty("content").GetString();
         }
 
         [HttpPost("ask")]
@@ -26,47 +50,14 @@ namespace ManthanGurukul.API.Controllers
             if (string.IsNullOrWhiteSpace(request.Question))
                 return BadRequest("Question is required.");
 
-            if (!System.IO.File.Exists(PdfFilePath))
-                return NotFound("PDF file not found on server.");
-
-            if (!System.IO.File.Exists(ScriptPath))
-                return NotFound("Python script not found on server.");
-
-            var psi = new ProcessStartInfo
-            {
-                FileName = "python",
-                Arguments = $"\"{ScriptPath}\" --pdf \"{PdfFilePath}\" --question \"{request.Question}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            psi.Environment["PYTHONIOENCODING"] = "utf-8";
-
             try
             {
-                using var process = Process.Start(psi);
-                if (process == null)
-                {
-                    _logger.LogError("Failed to start Python process.");
-                    return StatusCode(500, "Failed to start Python process.");
-                }
-
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    _logger.LogError("Python script error: {Error}", error);
-                    return BadRequest(new { error = error.Trim() });
-                }
-
-                return Ok(output.Trim());
+                string answer = await CallOllamaAsync(request.Question);
+                return Ok(answer);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception while running Python script.");
+                _logger.LogError(ex, "Exception while calling Ollama.");
                 return StatusCode(500, "Internal server error while processing your request.");
             }
         }
